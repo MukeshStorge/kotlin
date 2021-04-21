@@ -1,0 +1,61 @@
+stages:
+  - build
+
+build_job_dev:
+  stage: build
+  script:
+    - pwd
+    - ls -la
+    - mvn clean install
+    - sudo service nimbus-los2lms-api.service stop
+    - sudo cp -f ./target/los2lms.jar /data/nimbus/los2lms/los2lms.jar
+    - sudo service nimbus-los2lms-api.service start
+  tags:
+    - nimbus-core
+  only:
+    - dev
+    
+build_job_master:
+  stage: build
+  script:
+    - pwd
+    - echo "i am master"
+    - ls -la
+    - mvn clean install
+    - sudo ssh -i /data/nimbus/key/na-priyan.pem -p 22 na-priyan@10.91.20.5 "sudo service nimbus-los2lms-api.service stop;"
+    - sudo scp -i /data/nimbus/key/na-priyan.pem ./target/los2lms.jar na-priyan@10.91.20.5:/data/nimbus/los2lms/los2lms.jar
+    - sudo ssh -i /data/nimbus/key/na-priyan.pem -p 22 na-priyan@10.91.20.5 "sudo service nimbus-los2lms-api.service start;"
+  tags:
+    - nimbus-core
+  only:
+    - master
+    
+build_job_stage:
+  stage: build
+  script:
+    - pwd
+    - echo "i am stage"
+    - ls -la
+    - mvn clean install
+    - sudo ssh -i /data/nimbus/key/na-priyan.pem -p 22 na-priyan@10.91.20.7 "sudo service nimbus-los2lms-api.service stop;"
+    - sudo scp -i /data/nimbus/key/na-priyan.pem ./target/los2lms.jar na-priyan@10.91.20.7:/data/nimbus/los2lms/los2lms.jar
+    - sudo ssh -i /data/nimbus/key/na-priyan.pem -p 22 na-priyan@10.91.20.7 "sudo service nimbus-los2lms-api.service start;"
+  tags:
+    - nimbus-core
+  only:
+    - stage
+    
+build_job_release:
+  stage: build
+  script:
+    - pwd
+    - echo "i am release
+    - ls -la
+    - mvn clean install
+    - sudo ssh -i /data/nimbus/key/na-priyan.pem -p 22 na-priyan@10.91.16.9 "sudo service nimbus-los2lms-api.service stop;"
+    - sudo scp -i /data/nimbus/key/na-priyan.pem ./target/los2lms.jar na-priyan@10.91.16.9:/data/nimbus/los2lms/los2lms.jar
+    - sudo ssh -i /data/nimbus/key/na-priyan.pem -p 22 na-priyan@10.91.16.9 "sudo service nimbus-los2lms-api.service start;"
+  tags:
+    - nimbus-core
+  only:
+    - release
