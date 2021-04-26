@@ -1,3 +1,3 @@
-# kotlin Basic CRUD Application
+# kotlin Basic CRUD operations
 
 CRUD OPERATION
